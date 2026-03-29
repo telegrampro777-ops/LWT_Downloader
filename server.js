@@ -54,15 +54,21 @@ app.use('/auth', authRoutes);
 
 // Protect main app files (except login)
 app.use((req, res, next) => {
-  const publicPaths = ['/login.html', '/login.js', '/login.css', '/auth', '/favicon.ico'];
+  const publicPaths = ['/login', '/login.html', '/login.js', '/login.css', '/auth', '/favicon.ico'];
   if (req.isAuthenticated() || publicPaths.some(p => req.path.startsWith(p))) {
     return next();
   }
-  // If not authenticated and not a public path, redirect to login
+  
+  // If not authenticated, redirect to clean /login
   if (req.path === '/' || req.path.endsWith('.html')) {
-    return res.redirect('/login.html');
+    return res.redirect('/login');
   }
   next();
+});
+
+// Clean URL for login
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
