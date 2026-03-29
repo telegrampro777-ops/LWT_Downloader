@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TorrentStream — Play & Download Torrents Instantly</title>
+  <meta name="description" content="Paste any magnet link and instantly stream or download your files directly in the browser. No software needed." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background Orbs -->
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+  <div class="bg-orb orb3"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <span class="logo-text">TorrentStream</span>
+    </div>
+    <nav class="nav">
+      <a href="#how-it-works">How it works</a>
+      <span class="nav-badge">Free & Open</span>
+    </nav>
+  </header>
+
+  <!-- Hero / Input Section -->
+  <main>
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        100% Browser-Based · No Backend · No Signup
+      </div>
+      <h1 class="hero-title">
+        Paste a Magnet Link.<br />
+        <span class="gradient-text">Stream it Instantly.</span>
+      </h1>
+      <p class="hero-subtitle">
+        TorrentStream uses WebTorrent to download and play files directly in your browser. 
+        No apps, no waiting — just paste and go.
+      </p>
+
+      <!-- Input Box -->
+      <div class="input-card" id="input-section">
+        <div class="input-wrapper">
+          <span class="input-icon">🔗</span>
+          <input
+            type="text"
+            id="magnet-input"
+            placeholder="Paste your magnet link here... magnet:?xt=urn:btih:..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="load-btn" onclick="startTorrent()">
+            <span id="btn-text">Load Torrent</span>
+            <span id="btn-spinner" class="spinner hidden"></span>
+          </button>
+        </div>
+        <div class="input-hint">
+          <span>🧪 Try a public domain example:</span>
+          <button class="sample-btn" onclick="loadSample()">Load Sample Torrent (Big Buck Bunny)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Status / Progress Section -->
+    <section class="status-section hidden" id="status-section">
+      <div class="torrent-card">
+        <!-- Torrent Info Header -->
+        <div class="torrent-header">
+          <div class="torrent-icon">📦</div>
+          <div class="torrent-meta">
+            <h2 class="torrent-name" id="torrent-name">Loading...</h2>
+            <div class="torrent-stats">
+              <span id="torrent-size">Size: —</span>
+              <span class="separator">•</span>
+              <span id="torrent-peers">Peers: 0</span>
+              <span class="separator">•</span>
+              <span id="torrent-status-text">Connecting...</span>
+            </div>
+          </div>
+          <button class="close-btn" onclick="removeTorrent()" title="Stop & Remove">✕</button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-bar"></div>
+          </div>
+          <div class="progress-stats">
+            <span id="progress-percent">0%</span>
+            <span id="download-speed">↓ 0 KB/s</span>
+            <span id="upload-speed">↑ 0 KB/s</span>
+            <span id="eta">ETA: —</span>
+          </div>
+        </div>
+
+        <!-- Files List -->
+        <div class="files-section">
+          <h3 class="files-title">Files in this torrent</h3>
+          <div id="files-list" class="files-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Media Player Section -->
+    <section class="player-section hidden" id="player-section">
+      <div class="player-card">
+        <div class="player-header">
+          <span class="player-icon">▶️</span>
+          <span id="player-filename">Playing...</span>
+          <button class="close-player-btn" onclick="closePlayer()">✕ Close Player</button>
+        </div>
+        <div class="player-container">
+          <video id="video-player" controls autoplay></video>
+          <audio id="audio-player" controls autoplay class="hidden"></audio>
+          <div id="image-viewer" class="image-viewer hidden">
+            <img id="image-display" src="" alt="Preview" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+      <h2 class="section-title">How It Works</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon">📋</div>
+          <h3>Paste Magnet Link</h3>
+          <p>Copy any magnet:// link and paste it into the input box above.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon">⚡</div>
+          <h3>Instant Connection</h3>
+          <p>Your browser connects directly to torrent peers using WebRTC technology — no server required.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon">🎬</div>
+          <h3>Stream or Download</h3>
+          <p>Click any file to stream it inline or hit the download button to save it to your device.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="features-section">
+      <div class="features-grid">
+        <div class="feature-item">
+          <span class="feature-emoji">🔒</span>
+          <div>
+            <strong>Privacy First</strong>
+            <p>Everything happens in your browser. We never see your links or files.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-emoji">🆓</span>
+          <div>
+            <strong>Completely Free</strong>
+            <p>No account, no limits, no hidden costs. Open source and free forever.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-emoji">🌐</span>
+          <div>
+            <strong>Cross-Platform</strong>
+            <p>Works on any device with a modern browser — PC, Mac, Android, iOS.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-emoji">🎵</span>
+          <div>
+            <strong>Multi-Format</strong>
+            <p>Stream video, audio, view images, and download any other file type.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <span>⚡ TorrentStream — Built with <a href="https://webtorrent.io" target="_blank">WebTorrent</a></span>
+      <span class="footer-warning">⚠️ Only use for legal content you have rights to access.</span>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- WebTorrent CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
