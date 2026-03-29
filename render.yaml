@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: torrentstream
+    name: lwt-streamer
     env: node
     region: singapore
     plan: free
@@ -9,3 +9,9 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
