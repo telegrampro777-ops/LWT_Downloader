@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LWT — Play & Download Any Torrent Instantly</title>
+  <meta name="description"
+    content="Paste any magnet link and instantly stream or download files in your browser. Works with all torrents. No software needed." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Background Orbs -->
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+  <div class="bg-orb orb3"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span class="logo-text">LWT</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="nav-links">
+        <a href="#how-it-works">How it works</a>
+      </div>
+      <div id="user-profile" class="hidden">
+        <!-- Dropdown inserted here by JS -->
+      </div>
+    </div>
+  </header>
+
+  <!-- About Us Modal -->
+  <div id="about-modal" class="modal-overlay hidden" onclick="handleAboutClick(e)">
+    <div class="modal-box about-box">
+      <div class="modal-header">
+        <span class="modal-filename">About LWT</span>
+        <button class="modal-close-btn" onclick="closeAbout()">✕</button>
+      </div>
+      <div class="modal-body about-body">
+        <p><strong>LWT (LearnWise Together)</strong> is a high-performance torrent streaming platform designed for a seamless, software-free experience.</p>
+        <p>Our mission is to provide the fastest and most reliable way to access content directly in your browser using world-class server-side technology.</p>
+        <div class="about-footer">⚡ Powered by LWT Team</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="modal-overlay hidden" onclick="handleProfileClick(event)">
+    <div class="modal-box profile-box">
+      <div class="modal-header">
+        <span class="modal-filename">My Profile</span>
+        <button class="modal-close-btn" onclick="closeProfile()">✕</button>
+      </div>
+      <div class="modal-body profile-body">
+        <div class="profile-main">
+          <img id="prof-avatar" src="" class="prof-avatar-large" alt="Avatar">
+          <div class="prof-info">
+            <h3 id="prof-name">User Name</h3>
+            <p id="prof-email">email@example.com</p>
+            <div id="prof-joined" class="prof-badge">Member since ...</div>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button class="action-btn logout-modal-btn" onclick="logout()">
+            <i>🚪</i> Logout Account
+          </button>
+          <div class="divider-text">DANGER ZONE</div>
+          <button class="danger-btn" onclick="deleteAccount()">
+            <i>🗑️</i> Delete Account
+          </button>
+          <p class="danger-note">Warning: This will permanently delete your account and all history. This action cannot be undone.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero / Input Section -->
+  <main>
+    <section class="hero">
+      <h1 class="hero-title">
+        Paste Any Magnet Link.<br />
+        <span class="gradient-text">Stream it Instantly.</span>
+      </h1>
+      <p class="hero-subtitle">
+        LWT connects to all torrent peers (UDP, HTTP, WebRTC) server-side,
+        then streams your file directly to your browser — no software required.
+      </p>
+
+      <!-- Input Box -->
+      <div class="input-card" id="input-section">
+        <div class="input-wrapper">
+          <span class="input-icon">🔗</span>
+          <input type="text" id="magnet-input" placeholder="Paste your magnet link here... magnet:?xt=urn:btih:..."
+            autocomplete="off" spellcheck="false" id="magnet-input" />
+          <button id="load-btn" onclick="startTorrent()">
+            <span id="btn-text">Load Torrent</span>
+            <span id="btn-spinner" class="spinner hidden"></span>
+          </button>
+        </div>
+        <div class="input-hint">
+          <span>🧪 Try a public domain example:</span>
+          <button class="sample-btn" onclick="loadSample()">Big Buck Bunny (Sample)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Video Modal Popup ── -->
+    <div id="player-modal" class="modal-overlay hidden" onclick="handleModalClick(event)">
+      <div class="modal-box" id="modal-box">
+        <!-- Header -->
+        <div class="modal-header">
+          <span id="player-filename" class="modal-filename">Now Playing...</span>
+          <button class="modal-close-btn" onclick="closePlayer()" title="Close">✕</button>
+        </div>
+        <!-- Track selector injected here by JS -->
+        <!-- Player body -->
+        <div class="modal-body">
+          <video id="video-player" controls autoplay playsinline></video>
+          <audio id="audio-player" controls autoplay class="hidden"></audio>
+          <div id="image-viewer" class="image-viewer hidden">
+            <img id="image-display" alt="Preview" />
+          </div>
+          <div id="unsupported-msg" class="unsupported-msg hidden">
+            <span class="unsupported-icon">📄</span>
+            <p>This file type cannot be played in the browser.</p>
+            <p>Use the <strong>⬇ Download</strong> button instead.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Torrent History (all added torrents, newest first) -->
+    <section class="history-section hidden" id="history-section">
+      <div class="history-header-row">
+        <span id="history-header" class="history-header-title">📋 Active Torrents (0)</span>
+        <button class="clear-all-btn" onclick="removeAllTorrents()">🗑️ Clear All</button>
+      </div>
+      <!-- Cards are injected here by app.js, newest on top -->
+      <div id="history-container"></div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section" id="how-it-works">
+      <h2 class="section-title">How It Works</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-icon">📋</div>
+          <h3>Paste Magnet Link</h3>
+          <p>Copy any magnet:// link from any torrent site and paste it above.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-icon">🖥️</div>
+          <h3>Server Downloads</h3>
+          <p>Our server connects to all peers (UDP/TCP/HTTP) and starts fetching your file.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-icon">🎬</div>
+          <h3>Stream or Download</h3>
+          <p>Click Play to stream inline or Download to save the file to your device.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section">
+      <div class="features-grid">
+        <div class="feat-item">
+          <span>🌐</span>
+          <div><strong>All Tracker Types</strong>
+            <p>UDP, HTTP, WebRTC — server handles them all.</p>
+          </div>
+        </div>
+        <div class="feat-item">
+          <span>🆓</span>
+          <div><strong>Completely Free</strong>
+            <p>No account, no subscription, no limits.</p>
+          </div>
+        </div>
+        <div class="feat-item">
+          <span>⏩</span>
+          <div><strong>Stream While Downloading</strong>
+            <p>Play the video before it's fully downloaded.</p>
+          </div>
+        </div>
+        <div class="feat-item">
+          <span>📱</span>
+          <div><strong>Works Everywhere</strong>
+            <p>Any device, any browser — PC, phone, tablet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>⚡ LWT — Powered by LearnWise Together Team </a></span>
+      <span class="footer-warn">⚠️ Use only for content you have the right to access.</span>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
